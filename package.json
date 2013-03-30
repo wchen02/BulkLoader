@@ -1,6 +1,6 @@
 {
   "name": "bulk-loader",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Load all files matching a regex and performs a callback on them.",
   "main": "bulkloader.js",
   "scripts": {
@@ -22,7 +22,6 @@
   "author": "Wensheng Chen",
   "license": "BSD",
   "readmeFilename": "README.md",
-  "gitHead": "76f882f325f875609827f4b6a28515da1ce361fd",
   "dependencies": {
     "underscore": "~1.4.4"
   }
