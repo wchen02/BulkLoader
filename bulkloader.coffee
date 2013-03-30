@@ -2,25 +2,30 @@ fs = require 'fs'
 _ = require 'underscore'
 
 # Expects pattern in /pattern/flag format
-# Callback accepts one parameter, the required file
+# Callback takes 3 params: err, loadedFile, filename
 module.exports =
   loadDir: (dir, pattern, callback) ->
-    files = fs.readdirSync dir
+    fs.exists dir, (exists) ->
+      # If file does not exist and is not a file or dir
+      if !exists
+        return callback new Error("File does not exist"), null, dir
 
-    if pattern?
-      filteredFiles = _.filter files, (filename) ->
-        (filename.search pattern) >= 0
-    else
-      filteredFiles = files
+      files = fs.readdirSync dir
 
-    _.each filteredFiles, (filename) ->
-      fileToLoad = '.' + dir + filename
-      loadedFile = require fileToLoad
+      if pattern?
+        filteredFiles = _.filter files, (filename) ->
+          (filename.search pattern) >= 0
+      else
+        filteredFiles = files
 
-      if callback?
-        callback(loadedFile, fileToLoad)
+      _.each filteredFiles, (filename) ->
+        fileToLoad = '.' + dir + filename
+        loadedFile = require fileToLoad
+
+        if callback?
+          callback(null, loadedFile, fileToLoad)
+        return
       return
-    return
 
   loadDirs: (dirs, pattern, callback) ->
     that = this
