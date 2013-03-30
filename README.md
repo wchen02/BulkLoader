@@ -17,3 +17,7 @@ You can also pass a callback to be run when matching files are loaded.
     2. file: The required file
     3. filename: The filename
 
+# How to install
+```bash
+$ npm install bulk-loader
+```
