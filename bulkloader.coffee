@@ -5,12 +5,17 @@ _ = require 'underscore'
 # Callback takes 3 params: err, loadedFile, filename
 module.exports =
   loadDir: (dir, pattern, callback) ->
-    fs.exists dir, (exists) ->
+    fs.stat dir, (err, stats) ->
       # If file does not exist and is not a file or dir
-      if !exists
+      if err || !stats.isFile() && !stats.isDirectory()
         return callback new Error("File does not exist"), null, dir
 
-      files = fs.readdirSync dir
+      if stats.isFile()
+        files = [dir]
+        prefix = '../../'
+      else
+        files = fs.readdirSync dir
+        prefix = '../../' + dir
 
       if pattern?
         filteredFiles = _.filter files, (filename) ->
@@ -19,11 +24,11 @@ module.exports =
         filteredFiles = files
 
       _.each filteredFiles, (filename) ->
-        fileToLoad = '.' + dir + filename
+        fileToLoad = prefix + filename
         loadedFile = require fileToLoad
 
         if callback?
-          callback(null, loadedFile, fileToLoad)
+          callback(null, loadedFile, fileToLoad.substring(6))
         return
       return
 
