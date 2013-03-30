@@ -3,24 +3,28 @@ _ = require 'underscore'
 
 # Expects pattern in /pattern/flag format
 # Callback accepts one parameter, the required file
-exports.loadDir = (dir, pattern, callback) ->
-  files = fs.readdirSync dir
+module.exports =
+  loadDir: (dir, pattern, callback) ->
+    files = fs.readdirSync dir
 
-  if pattern?
-    filteredFiles = _.filter files, (filename) ->
-      (filename.search pattern) > 0
-  else
-    filteredFiles = files
+    if pattern?
+      filteredFiles = _.filter files, (filename) ->
+        (filename.search pattern) >= 0
+    else
+      filteredFiles = files
 
-  _.each filteredFiles, (filename) ->
-    loadedFile = require '.' + dir + filename
+    _.each filteredFiles, (filename) ->
+      fileToLoad = '.' + dir + filename
+      loadedFile = require fileToLoad
 
-    if callback?
-      callback(loadedFile)
+      if callback?
+        callback(loadedFile, fileToLoad)
+      return
+    return
 
-exports.loadDirs = (dirs, pattern, callback) ->
-  _.each dirs, (dir) ->
-    loadDir(dir, pattern, callback)
-
-  return
-
+  loadDirs: (dirs, pattern, callback) ->
+    that = this
+    _.each dirs, (dir) ->
+      that.loadDir(dir, pattern, callback)
+      return
+    return
