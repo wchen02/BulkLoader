@@ -7,18 +7,18 @@
   _ = require('underscore');
 
   module.exports = {
-    loadDir: function(dir, pattern, callback) {
-      return fs.stat(dir, function(err, stats) {
+    load: function(filepath, pattern, callback) {
+      return fs.stat(filepath, function(err, stats) {
         var files, filteredFiles, prefix;
         if (err || !stats.isFile() && !stats.isDirectory()) {
-          return callback(new Error("File does not exist"), null, dir);
+          return callback(new Error("File does not exist"), null, filepath);
         }
         if (stats.isFile()) {
-          files = [dir];
+          files = [filepath];
           prefix = '../../';
         } else {
-          files = fs.readdirSync(dir);
-          prefix = '../../' + dir;
+          files = fs.readdirSync(filepath);
+          prefix = '../../' + filepath;
         }
         if (pattern != null) {
           filteredFiles = _.filter(files, function(filename) {
@@ -37,11 +37,11 @@
         });
       });
     },
-    loadDirs: function(dirs, pattern, callback) {
+    loadMultiple: function(filepaths, pattern, callback) {
       var that;
       that = this;
-      _.each(dirs, function(dir) {
-        that.loadDir(dir, pattern, callback);
+      _.each(filepaths, function(filepath) {
+        that.load(filepath, pattern, callback);
       });
     }
   };

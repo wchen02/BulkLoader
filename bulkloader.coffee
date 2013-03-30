@@ -4,18 +4,18 @@ _ = require 'underscore'
 # Expects pattern in /pattern/flag format
 # Callback takes 3 params: err, loadedFile, filename
 module.exports =
-  loadDir: (dir, pattern, callback) ->
-    fs.stat dir, (err, stats) ->
+  load: (filepath, pattern, callback) ->
+    fs.stat filepath, (err, stats) ->
       # If file does not exist and is not a file or dir
       if err || !stats.isFile() && !stats.isDirectory()
-        return callback new Error("File does not exist"), null, dir
+        return callback new Error("File does not exist"), null, filepath
 
       if stats.isFile()
-        files = [dir]
+        files = [filepath]
         prefix = '../../'
       else
-        files = fs.readdirSync dir
-        prefix = '../../' + dir
+        files = fs.readdirSync filepath
+        prefix = '../../' + filepath
 
       if pattern?
         filteredFiles = _.filter files, (filename) ->
@@ -32,9 +32,9 @@ module.exports =
         return
       return
 
-  loadDirs: (dirs, pattern, callback) ->
+  loadMultiple: (filepaths, pattern, callback) ->
     that = this
-    _.each dirs, (dir) ->
-      that.loadDir(dir, pattern, callback)
+    _.each filepaths, (filepath) ->
+      that.load filepath, pattern, callback
       return
     return
