@@ -1,0 +1,29 @@
+{
+  "name": "bulk-loader",
+  "version": "0.0.2",
+  "description": "Bulk Loader is a node.js module that can load all files in a given directory with filename matching a regular expression pattern. You can also pass a callback to be run when matching files are loaded.",
+  "main": "bulkloader.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/icydragoon/BulkLoader.git"
+  },
+  "keywords": [
+    "Node.js",
+    "Bulk",
+    "Load",
+    "Loader",
+    "Require",
+    "Pattern",
+    "Callback"
+  ],
+  "author": "Wensheng Chen",
+  "license": "BSD",
+  "readmeFilename": "README.md",
+  "gitHead": "76f882f325f875609827f4b6a28515da1ce361fd",
+  "dependencies": {
+    "underscore": "~1.4.4"
+  }
+}
