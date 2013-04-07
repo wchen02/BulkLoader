@@ -3,6 +3,9 @@ Bulk Loader is a node.js module that can load all files in a given directory wit
 You can also pass a callback to be run when matching files are loaded.
 
 ## Methods
+* setBasePath (path)
+    1. path, sets the base path where the script should start looking, this is required when loading from path other than the app root dir
+
 * load (filepath, pattern, callback)
     1. filepath: can be a file name or a path to a directory
     2. pattern: regex pattern to filter the files. eg: /Model.coffee$/i

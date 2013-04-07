@@ -7,7 +7,16 @@
   _ = require('underscore');
 
   module.exports = {
+    basePath: __dirname,
+    setBasePath: function(path) {
+      if (path[path.length - 1] !== '/') {
+        path += '/';
+      }
+      this.basePath = path;
+    },
     load: function(filepath, pattern, callback) {
+      var that;
+      that = this;
       return fs.stat(filepath, function(err, stats) {
         var files, filteredFiles, prefix;
         if (err || !stats.isFile() && !stats.isDirectory()) {
@@ -15,10 +24,10 @@
         }
         if (stats.isFile()) {
           files = [filepath];
-          prefix = '../../';
+          prefix = that.basePath;
         } else {
           files = fs.readdirSync(filepath);
-          prefix = '../../' + filepath;
+          prefix = that.basePath + filepath;
         }
         if (pattern != null) {
           filteredFiles = _.filter(files, function(filename) {
