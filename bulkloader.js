@@ -27,6 +27,9 @@
           prefix = that.basePath;
         } else {
           files = fs.readdirSync(filepath);
+          if (filepath[filepath.length - 1] !== '/') {
+            filepath += '/';
+          }
           prefix = that.basePath + filepath;
         }
         if (pattern != null) {
