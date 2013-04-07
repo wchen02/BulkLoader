@@ -1,6 +1,6 @@
 {
   "name": "bulk-loader",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Load all files matching a regex and performs a callback on them.",
   "main": "bulkloader.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/icydragoon/BulkLoader.git#0.0.6"
+    "url": "git://github.com/icydragoon/BulkLoader.git#0.0.7"
   },
   "keywords": [
     "Node.js",
