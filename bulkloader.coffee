@@ -4,7 +4,7 @@ _ = require 'underscore'
 # Expects pattern in /pattern/flag format
 # Callback takes 3 params: err, loadedFile, filename
 module.exports =
-  basePath: __dirname
+  basePath: '../../'
 
   setBasePath: (path) ->
     if path[path.length-1] isnt '/'
