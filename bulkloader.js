@@ -15,42 +15,47 @@
       this.basePath = path;
     },
     load: function(filepath, pattern, callback) {
-      var that;
-      that = this;
+      if (pattern == null) {
+        pattern = '';
+      }
+      filepath = this.basePath + filepath;
       return fs.stat(filepath, function(err, stats) {
-        var files, filteredFiles, prefix;
+        var fileToLoad, files, filteredFiles, loadedFile;
         if (err || !stats.isFile() && !stats.isDirectory()) {
           return callback(new Error("File does not exist"), null, filepath);
         }
         if (stats.isFile()) {
           files = [filepath];
-          prefix = that.basePath;
         } else {
           files = fs.readdirSync(filepath);
           if (filepath[filepath.length - 1] !== '/') {
             filepath += '/';
           }
-          prefix = that.basePath + filepath;
         }
-        if (pattern != null) {
-          filteredFiles = _.filter(files, function(filename) {
-            return (filename.search(pattern)) >= 0;
-          });
-        } else {
-          filteredFiles = files;
-        }
-        _.each(filteredFiles, function(filename) {
-          var fileToLoad, loadedFile;
-          fileToLoad = prefix + filename;
+        filteredFiles = _.filter(files, function(filename) {
+          return (filename.search(pattern)) >= 0;
+        });
+        fileToLoad = loadedFile = '';
+        if (filteredFiles.length === 1) {
+          fileToLoad = filepath;
           loadedFile = require(fileToLoad);
+        } else {
+          _.each(filteredFiles, function(filename) {
+            fileToLoad = filepath + filename;
+            return loadedFile = require(fileToLoad);
+          });
           if (callback != null) {
             callback(null, loadedFile, fileToLoad.substring(6));
           }
-        });
+          return;
+        }
       });
     },
     loadMultiple: function(filepaths, pattern, callback) {
       var that;
+      if (pattern == null) {
+        pattern = '';
+      }
       that = this;
       _.each(filepaths, function(filepath) {
         that.load(filepath, pattern, callback);
