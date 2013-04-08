@@ -10,24 +10,25 @@ module.exports =
     if path[path.length-1] isnt '/'
       path += '/'
     @basePath = path
-    return
 
-  load: (filepath, pattern, callback) ->
-    that = this
+  load: (filepath, pattern, callback) =>
+    if basePath isnt '../../'
+      filepath = basePath + filepath
+
     fs.stat filepath, (err, stats) ->
       # If file does not exist and is not a file or dir
-      if err || !stats.isFile() && !stats.isDirectory()
-        return callback new Error("File does not exist"), null, filepath
+      if err or not stats.isFile() and not stats.isDirectory()
+        return callback new Error("An error occured while loading the file: #{filepath}"), null, filepath
 
       if stats.isFile()
         # underscore _.each expects an array
         files = [filepath]
-        prefix = that.basePath
+        prefix = @basePath
       else
         files = fs.readdirSync filepath
         if filepath[filepath.length-1] isnt '/'
           filepath += '/'
-        prefix = that.basePath + filepath
+        prefix = @basePath + filepath
 
       if pattern?
         filteredFiles = _.filter files, (filename) ->
@@ -41,12 +42,7 @@ module.exports =
 
         if callback?
           callback(null, loadedFile, fileToLoad.substring(6))
-        return
-      return
 
-  loadMultiple: (filepaths, pattern, callback) ->
-    that = this
+  loadMultiple: (filepaths, pattern, callback) =>
     _.each filepaths, (filepath) ->
-      that.load filepath, pattern, callback
-      return
-    return
+      @load filepath, pattern, callback
