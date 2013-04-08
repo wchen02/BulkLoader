@@ -15,12 +15,12 @@ describe "Bulk Loader", ->
     bulkloader.setBasePath __dirname
     expect(bulkloader).to.have.property 'basePath', __dirname + '/'
 
-#  it "should load the test file from current directory", ->
-#    bulkloader.setBasePath __dirname
-#    bulkloader.load "load/a", null, (err, file, filename) ->
-#      expect(err).to.not.exist
-#      expect(file).to.exist
-#      expect(filename).to.be.a('string')
+  it "should load the test file from current directory", ->
+    bulkloader.setBasePath __dirname
+    bulkloader.load "load/a.js", null, (err, file, filename) ->
+      expect(err).to.not.exist
+      expect(file).to.exist
+      expect(filename).to.be.a('string')
 
   it "should load the test dir from current directory", ->
     bulkloader.setBasePath __dirname
@@ -42,3 +42,18 @@ describe "Bulk Loader", ->
       expect(err).to.not.exist
       expect(file).to.exist
       expect(filename).to.be.a('string')
+
+  it "should not load an invalid file", ->
+    bulkloader.setBasePath __dirname + '/load'
+    bulkloader.load "nonExistent.js", null, (err, file, filename) ->
+      expect(err).to.exist
+      expect(file).to.not.exist
+      expect(filename).to.be.a('string')
+
+  it "should load multiple files", (done)->
+    bulkloader.setBasePath __dirname + '/load'
+    bulkloader.load ['a.js', 'b.js'], null, (err, file, filename) ->
+      expect(err).to.exist
+      expect(file).to.not.exist
+      expect(filename).to.be.a('string')
+      console.log(filename)

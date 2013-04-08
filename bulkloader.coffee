@@ -1,6 +1,25 @@
 fs = require 'fs'
 _ = require 'underscore'
 
+loadFile = (filename, pattern, callback) ->
+  fs.stat filename, (err, stats) ->
+    if err || !stats.isFile()
+      filename = fileToLoad.substring(6) if filename is '../../'
+      return callback new Error("An error occured while tring to require: " + filename), null, filename
+
+    if (filename.search pattern) >= 0
+      loadedFile = require filename
+
+      if callback?
+        filename = fileToLoad.substring(6) if filename is '../../'
+        callback(null, loadedFile, filename)
+    return
+
+loadDir = (filedir, pattern, callback) ->
+  filenames = fs.readdir filedir
+  _.each filenames, (filename) ->
+    @loadFile(filename, pattern, callback)
+
 # Expects pattern in /pattern/flag format
 # Callback takes 3 params: err, loadedFile, filename
 module.exports =
@@ -12,42 +31,18 @@ module.exports =
     @basePath = path
     return
 
-  load: (filepath, pattern = '', callback) ->
-    filepath = @basePath + filepath
-
-    fs.stat filepath, (err, stats) ->
-      # If file does not exist and is not a file or dir
-      if err || !stats.isFile() && !stats.isDirectory()
-        return callback new Error("File does not exist"), null, filepath
-
-      if stats.isFile()
-        # underscore _.each expects an array
-        files = [filepath]
-      else
-        files = fs.readdirSync filepath
-        if filepath[filepath.length-1] isnt '/'
-          filepath += '/'
-
-      filteredFiles = _.filter files, (filename) ->
-        (filename.search pattern) >= 0
-
-      fileToLoad = loadedFile = ''
-      if filteredFiles.length == 1
-        fileToLoad = filepath
-        loadedFile = require fileToLoad
-      else
-        _.each filteredFiles, (filename) ->
-          fileToLoad = filepath + filename
-          loadedFile = require fileToLoad
-
-        if callback?
-          callback(null, loadedFile, fileToLoad.substring(6))
-        return
-      return
-
-  loadMultiple: (filepaths, pattern = '', callback) ->
+  load: (filepaths, pattern, callback) ->
+    filepaths = [].concat filepaths
     that = this
     _.each filepaths, (filepath) ->
-      that.load filepath, pattern, callback
-      return
-    return
+      if filepath[0] != '/'
+        filepath = that.basePath + filepath
+
+      fs.stat filepath, (err, stats) ->
+        if err
+          filepath = filepath.substring(6) if filepath is '../../'
+          return callback new Error("An error occured while tring to require: " + filepath), null, filepath
+        if stats.isFile()
+          loadFile(filepath, pattern, callback)
+        if stats.isDirectory()
+          loadDir(filepath, pattern, callback)
